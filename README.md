@@ -231,3 +231,7 @@ Now, we can use ReportCardView as if it were a regular table.
     SELECT * from ReportCardView;
 
 Play around with selecting and joining different data in your tables, and coming up with different views.
+exSQL
+=====
+
+Connecting SQL to Python

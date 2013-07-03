@@ -7,13 +7,21 @@ import sqlite3
 DB = None
 CONN = None
 
+HELP_MSGS = {
+    "student": "Command format is: student, <student name>",
+    "project": "project, <project title"
+}
+
 def get_student_by_github(github):
     query = """SELECT first_name, last_name, github FROM Students2 WHERE github = ?"""
     DB.execute(query, (github,)) # Must be tuple even if only one value is subbed
     row = DB.fetchone()
-    print """\
-    Student: %s %s
-    Github account: %s"""%(row[0], row[1], row[2])
+    if row == None:
+        print "Student does not exist!"
+    else: 
+        print """\
+        Student: %s %s
+        Github account: %s"""%(row[0], row[1], row[2])
 
 def get_project_by_title(title):
     query = """SELECT title, description, max_grade FROM Projects2 WHERE title = ?"""
@@ -84,20 +92,32 @@ def main():
         command = tokens[0]
         args = tokens[1:]
 
-        if command == "student":
-            get_student_by_github(*args) 
-        elif command == "new_student":
-            make_new_student(*args)
-        elif command == "project":
-            get_project_by_title(*args)
-        elif command == "new_project":
-            make_new_project(*args)
-        elif command == "grade":
-            get_grade_by_project(*args)
-        elif command == "new_grade":
-            update_grade(*args)
-        elif command == "get_grades":
-            get_grades_by_student(*args)
+        try:
+            if command == "student":
+                # if len(tokens) == 2: #add error message for wrong number of arguments
+                get_student_by_github(*args)
+                # else:
+                # print "Looking for a particular student? Go ahead and type 'student, <github name>'" 
+            elif command == "new_student":
+                make_new_student(*args)
+            elif command == "project":
+                get_project_by_title(*args)
+            elif command == "new_project":
+                make_new_project(*args)
+            elif command == "grade":
+                get_grade_by_project(*args)
+            elif command == "new_grade":
+                update_grade(*args)
+            elif command == "get_grades":
+                get_grades_by_student(*args)
+            else:
+                print "Please type a real command!"
+        except TypeError, e:
+            print HELP_MSGS[command]
+        except NameError, e:
+            pass
+        except:
+            pass
 
     CONN.close()
 
